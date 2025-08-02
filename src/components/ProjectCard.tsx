@@ -2,14 +2,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 interface ProjectCardProps {
-  id: string;
   title: string;
   description: string;
   imageUrl?: string;
   href: string;
 }
 
-export default function ProjectCard({ id, title, description, imageUrl, href }: ProjectCardProps) {
+export default function ProjectCard({ title, description, imageUrl, href }: ProjectCardProps) {
   return (
     <Link href={href} className="group block">
       <div className="space-y-4">

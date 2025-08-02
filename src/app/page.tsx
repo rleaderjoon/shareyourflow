@@ -36,7 +36,7 @@ export default function Home() {
           <section className="mb-24">
             <div className="max-w-4xl">
               <h1 className="text-6xl font-bold text-black leading-tight mb-8">
-                Hello, I'm ShareYourFlow.
+                Hello, I&apos;m ShareYourFlow.
               </h1>
               <p className="text-xl text-gray-700 leading-relaxed max-w-3xl">
                 프로그래머들이 알고리즘 문제 해결 과정을 공유하고 학습할 수 있는 플랫폼입니다. 
@@ -56,7 +56,6 @@ export default function Home() {
               {projects.map((project) => (
                 <ProjectCard
                   key={project.id}
-                  id={project.id}
                   title={project.title}
                   description={project.description}
                   href={project.href}
