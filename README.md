@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ShareYourFlow
 
-## Getting Started
+ShareYourFlow는 Next.js, TypeScript, Firebase를 사용하여 구축된 웹 애플리케이션입니다.
 
-First, run the development server:
+## 기술 스택
 
+- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
+- **Backend**: Firebase (Authentication, Firestore, Storage)
+- **Deployment**: Vercel
+
+## 시작하기
+
+### 필수 조건
+
+- Node.js 18.0.0 이상
+- npm 또는 yarn
+
+### 설치
+
+1. 저장소를 클론합니다:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/rleaderjoon/shareyourflow.git
+cd shareyourflow
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. 의존성을 설치합니다:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. 환경 변수를 설정합니다:
+`.env.local` 파일을 생성하고 Firebase 설정을 추가하세요:
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key_here
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. 개발 서버를 실행합니다:
+```bash
+npm run dev
+```
 
-## Learn More
+5. 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 결과를 확인하세요.
 
-To learn more about Next.js, take a look at the following resources:
+## 프로젝트 구조
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/                 # Next.js App Router
+│   ├── layout.tsx      # 루트 레이아웃
+│   └── page.tsx        # 홈페이지
+├── components/          # 재사용 가능한 컴포넌트
+├── lib/                # 유틸리티 및 설정
+│   └── firebase.ts     # Firebase 설정
+└── hooks/              # 커스텀 훅
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 배포
 
-## Deploy on Vercel
+이 프로젝트는 Vercel을 통해 배포됩니다. GitHub 저장소에 푸시하면 자동으로 배포됩니다.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 라이선스
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT License
