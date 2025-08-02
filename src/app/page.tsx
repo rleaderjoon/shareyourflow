@@ -51,8 +51,8 @@ export default function Home() {
               Selected Problems
             </h2>
             
-            {/* 프로젝트 그리드 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {/* 프로젝트 그리드 - 3열 고정 */}
+            <div className="grid grid-cols-3 gap-12">
               {projects.map((project) => (
                 <ProjectCard
                   key={project.id}
