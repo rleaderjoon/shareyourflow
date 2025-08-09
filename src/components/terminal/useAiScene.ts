@@ -31,7 +31,17 @@ export function useAiScene({ filename, code, steps }: UseAiSceneArgs) {
         const json = await res.json();
         if (aborted) return;
         if (json?.data) {
-          setData(json.data as SceneSpecResponse);
+          let parsed: SceneSpecResponse | null = null;
+          if (typeof json.data === "string") {
+            try {
+              parsed = JSON.parse(json.data) as SceneSpecResponse;
+            } catch {
+              parsed = null;
+            }
+          } else {
+            parsed = json.data as SceneSpecResponse;
+          }
+          setData(parsed);
           setSource(json.source as "ai" | "cache");
         } else if (json?.payload) {
           // 서버에 OPENAI_API_KEY가 없을 때 페이로드만 반환

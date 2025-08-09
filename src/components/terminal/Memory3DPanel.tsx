@@ -84,7 +84,15 @@ export function Memory3DPanel({ active, onActivate, sourceCode, steps }: { activ
         </div>
       </div>
       <div className="mt-3 text-xs text-neutral-700">
-        {scene.loading ? "AI 분석 중..." : scene.error ? `분석 오류: ${scene.error}` : "2D/3D 좌표로 메모리 구조를 요약해 보여줍니다."}
+        {scene.loading
+          ? "AI 분석 중..."
+          : scene.error
+          ? `분석 오류: ${scene.error}`
+          : scene.source === "payload"
+          ? "드라이런 모드: 모델 호출 없이 payload만 반환됨"
+          : scene.data
+          ? `${scene.data.scenes?.[0]?.title ?? "메모리 요약"}`
+          : "휴리스틱 렌더링"}
       </div>
     </div>
   );
