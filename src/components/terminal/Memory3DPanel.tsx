@@ -12,7 +12,21 @@ type Cell = {
   value: string;
 };
 
-export function Memory3DPanel({ active, onActivate, sourceCode, steps }: { active: boolean; onActivate: () => void; sourceCode?: string; steps?: Array<{id:string; label:string; description?: string}> }) {
+export function Memory3DPanel({
+  active,
+  onActivate,
+  sourceCode,
+  steps,
+  sceneFromServer,
+  activeStepId,
+}: {
+  active: boolean;
+  onActivate: () => void;
+  sourceCode?: string;
+  steps?: Array<{ id: string; label: string; description?: string }>;
+  sceneFromServer?: { scenes?: any[] };
+  activeStepId?: string;
+}) {
   // 데모용 3D 메모리 격자 (하드코딩)
   const cells = useMemo<Cell[]>(() => {
     const items: Cell[] = [];
@@ -47,7 +61,29 @@ export function Memory3DPanel({ active, onActivate, sourceCode, steps }: { activ
   // 간단 분석 결과(데모): 소스코드가 주어지면 분석, 없으면 기본 격자
   const scene = useAiScene({ filename: undefined, code: sourceCode ?? "", steps: steps ?? [] });
   const spec: SceneSpec = useMemo(() => {
-    const aiSpec = scene.data?.scenes?.[0];
+    const baseScene = sceneFromServer?.scenes?.[0] ?? scene.data?.scenes?.[0];
+    // 단계별 전이 적용
+    let aiSpec = baseScene;
+    if (baseScene && baseScene.transitions && activeStepId) {
+      const applicable = baseScene.transitions.filter((t: any) => t.atStepId === activeStepId);
+      if (applicable.length) {
+        aiSpec = {
+          ...baseScene,
+          cells: baseScene.cells.map((c: any) => {
+            const u = applicable
+              .flatMap((t: any) => t.updates)
+              .find((uu: any) => uu.id === c.id);
+            if (!u) return c;
+            return {
+              ...c,
+              value: u.value ?? c.value,
+              state: u.state ?? c.state,
+              label: u.label ?? c.label,
+            };
+          }),
+        };
+      }
+    }
     if (aiSpec && aiSpec.cells?.length) return aiSpec as unknown as SceneSpec;
     if (sourceCode) return analyzeMemoryFromCode(sourceCode);
     return {

@@ -13,7 +13,7 @@ export type SceneSpec = {
 
 // 아주 간단한 휴리스틱 기반 감지기: 배열/2D/3D/트리
 export function analyzeMemoryFromCode(code: string): SceneSpec {
-  const trimmed = code.replace(/\s+/g, " ");
+  const trimmed = code.replace(/[\t ]+/g, " ");
 
   // 3D 배열 패턴: new Array(x).fill(0).map(...new Array(y)... new Array(z)) 등
   const is3D = /new\s+Array\s*\(\s*\w+\s*\)\.fill\([^)]*\)\.map\(.*new\s+Array\s*\(.*\)\.fill\([^)]*\)\.map\(.*new\s+Array/i.test(trimmed);
@@ -38,7 +38,11 @@ export function analyzeMemoryFromCode(code: string): SceneSpec {
   }
 
   // 1D 배열 패턴: [] 리터럴 또는 new Array(n)
-  const is1D = /\[[^\]]*\]/.test(code) || /new\s+Array\s*\(\s*\w+\s*\)/.test(code);
+  // 다중 라인 입력에서 두 번째 줄이 스페이스 구분 숫자/토큰이라면 1D 시각화 (ex: const input = `4\n2 7 11 15\n9`)
+  const lines = code.split(/\r?\n/).map((l) => l.trim());
+  const secondLine = lines.find((l) => /^\d+(\s+\d+)+$/.test(l));
+  const isInlineArrayLiteral = /\[[^\]]*\]/.test(code) || /new\s+Array\s*\(\s*\w+\s*\)/.test(code);
+  const is1D = !!secondLine || isInlineArrayLiteral;
   if (is1D) {
     const N = 8;
     return {

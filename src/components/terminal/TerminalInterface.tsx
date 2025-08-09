@@ -8,6 +8,7 @@ import { Memory3DPanel } from "./Memory3DPanel";
 import WindowChrome from "./WindowChrome";
 import StepsPanel, { StepItem } from "./StepsPanel";
 import { sectionContent } from "./sectionContent";
+import useAiScene from "./useAiScene";
 
 export function TerminalInterface() {
   const [currentSection, setCurrentSection] = useState<string>("");
@@ -28,6 +29,16 @@ export function TerminalInterface() {
     { id: "output", label: "4. 출력", startLine: 95 },
   ];
   const [activeStepId, setActiveStepId] = useState<string | undefined>(undefined);
+
+  // 전체 코드 컨텍스트를 한 번에 AI에 전달
+  const combinedCode = Object.values(sectionContent)
+    .map((s) => `// ${s.title}\n${s.code}`)
+    .join("\n\n/* --- */\n\n");
+  const aiScene = useAiScene({
+    filename: undefined,
+    code: combinedCode,
+    steps: steps.map((s) => ({ id: s.id, label: s.label })),
+  });
 
   return (
     <div className="py-6 min-h-screen bg-[rgb(231,229,211)] text-black">
@@ -69,8 +80,10 @@ export function TerminalInterface() {
                   <Memory3DPanel
                     active={activePanel === "memory"}
                     onActivate={() => setActivePanel("memory")}
-                    sourceCode={currentSection ? sectionContent[currentSection]?.code : undefined}
+                    sourceCode={combinedCode}
                     steps={steps}
+                    sceneFromServer={aiScene.data ?? undefined}
+                    activeStepId={activeStepId}
                   />
                 </div>
               </WindowChrome>
