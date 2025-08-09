@@ -25,10 +25,8 @@ export function buildAiPayload(input: BuildPayloadInput) {
     user: userPrompt,
     text_format: {
       type: "json_schema",
-      json_schema: {
-        name: "scene_spec_response",
-        schema: SceneSpecJsonSchema,
-      },
+      name: "scene_spec_response",
+      schema: SceneSpecJsonSchema,
     },
   } as const;
 }
