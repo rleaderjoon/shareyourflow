@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       apiKey,
       system: payload.system,
       user: payload.user,
-      response_format: payload.response_format,
+      text_format: payload.text_format,
     });
     aiSceneCache.set(cacheKey, data);
     return NextResponse.json({ source: "ai", data }, { status: 200 });

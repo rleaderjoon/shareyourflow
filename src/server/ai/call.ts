@@ -8,7 +8,7 @@ export interface CallAiArgs {
   apiKey: string;
   system: string;
   user: string;
-  response_format: unknown;
+  text_format: unknown;
 }
 
 export async function callAi(args: CallAiArgs): Promise<SceneSpecResponse> {
@@ -28,7 +28,7 @@ export async function callAi(args: CallAiArgs): Promise<SceneSpecResponse> {
         { role: "system", content: args.system },
         { role: "user", content: args.user },
       ],
-      response_format: args.response_format,
+      text: { format: args.text_format },
     }),
   });
 
@@ -40,8 +40,7 @@ export async function callAi(args: CallAiArgs): Promise<SceneSpecResponse> {
   const data = await res.json();
   // OpenAI Responses API returns JSON object. We expect the parsed JSON in data.output[0].content[0].text
   // but response_format=json_schema should return JSON in data.output[0].content[0].json
-  const json =
-    data?.output?.[0]?.content?.[0]?.json ?? data?.output?.[0]?.content?.[0]?.text ?? data;
+  const json = data?.output?.[0]?.content?.[0]?.json ?? data?.output?.[0]?.content?.[0]?.text ?? data;
   return json as SceneSpecResponse;
 }
 

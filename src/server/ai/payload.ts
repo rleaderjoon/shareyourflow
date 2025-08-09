@@ -23,7 +23,7 @@ export function buildAiPayload(input: BuildPayloadInput) {
   return {
     system: SYSTEM_PROMPT,
     user: userPrompt,
-    response_format: {
+    text_format: {
       type: "json_schema",
       json_schema: {
         name: "scene_spec_response",
