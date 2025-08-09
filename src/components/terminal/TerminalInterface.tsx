@@ -4,7 +4,6 @@ import { useState } from "react";
 import { AsciiLogo } from "./AsciiLogo";
 import { MainMenu } from "./MainMenu";
 import { SectionViewer } from "./SectionViewer";
-import { TimelinePanel } from "./TimelinePanel";
 import { Memory3DPanel } from "./Memory3DPanel";
 import WindowChrome from "./WindowChrome";
 import StepsPanel, { StepItem } from "./StepsPanel";
