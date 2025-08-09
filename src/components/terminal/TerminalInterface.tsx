@@ -64,15 +64,16 @@ export function TerminalInterface() {
           <div className="flex-1 min-h-0">
             <div className={`${activePanel === "memory" ? "ring-2 ring-neutral-900 rounded-[12px]" : ""}`}>
               <div onClick={() => setActivePanel("memory")}> 
-                <WindowChrome title="메모리">
-                  <div className="p-4">
-                    <Memory3DPanel
-                      active={activePanel === "memory"}
-                      onActivate={() => setActivePanel("memory")}
-                      sourceCode={currentSection ? sectionContent[currentSection]?.code : undefined}
-                    />
-                  </div>
-                </WindowChrome>
+              <WindowChrome title="메모리">
+                <div className="p-4">
+                  <Memory3DPanel
+                    active={activePanel === "memory"}
+                    onActivate={() => setActivePanel("memory")}
+                    sourceCode={currentSection ? sectionContent[currentSection]?.code : undefined}
+                    steps={steps}
+                  />
+                </div>
+              </WindowChrome>
               </div>
             </div>
           </div>

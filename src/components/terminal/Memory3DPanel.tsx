@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { analyzeMemoryFromCode, SceneSpec } from "./memoryAnalyzer";
+import useAiScene from "./useAiScene";
 
 type Cell = {
   id: string;
@@ -11,7 +12,7 @@ type Cell = {
   value: string;
 };
 
-export function Memory3DPanel({ active, onActivate, sourceCode }: { active: boolean; onActivate: () => void; sourceCode?: string }) {
+export function Memory3DPanel({ active, onActivate, sourceCode, steps }: { active: boolean; onActivate: () => void; sourceCode?: string; steps?: Array<{id:string; label:string; description?: string}> }) {
   // 데모용 3D 메모리 격자 (하드코딩)
   const cells = useMemo<Cell[]>(() => {
     const items: Cell[] = [];
@@ -44,15 +45,17 @@ export function Memory3DPanel({ active, onActivate, sourceCode }: { active: bool
   }, [cells.length, active]);
 
   // 간단 분석 결과(데모): 소스코드가 주어지면 분석, 없으면 기본 격자
+  const scene = useAiScene({ filename: undefined, code: sourceCode ?? "", steps: steps ?? [] });
   const spec: SceneSpec = useMemo(() => {
+    const aiSpec = scene.data?.scenes?.[0];
+    if (aiSpec && aiSpec.cells?.length) return aiSpec as unknown as SceneSpec;
     if (sourceCode) return analyzeMemoryFromCode(sourceCode);
-    // fallback: 기존 데모 격자를 SceneSpec 형태로 변환
     return {
       kind: "array2D",
       dimensions: [6, 4, 1],
       cells: cells.map((c) => ({ id: c.id, position: [c.x, c.y, c.z], value: c.value })),
-    };
-  }, [sourceCode, cells]);
+    } as unknown as SceneSpec;
+  }, [scene.data, sourceCode, cells]);
 
   return (
     <div onClick={onActivate} className={`border border-neutral-300 rounded-md bg-white/70 backdrop-blur p-4`}>
@@ -81,7 +84,7 @@ export function Memory3DPanel({ active, onActivate, sourceCode }: { active: bool
         </div>
       </div>
       <div className="mt-3 text-xs text-neutral-700">
-        2D/3D 좌표를 활용하여 메모리 블록을 직관적으로 배치합니다. 배열(1D) → 행렬(2D) → 레이어(3D) 개념으로 확장됩니다.
+        {scene.loading ? "AI 분석 중..." : scene.error ? `분석 오류: ${scene.error}` : "2D/3D 좌표로 메모리 구조를 요약해 보여줍니다."}
       </div>
     </div>
   );
