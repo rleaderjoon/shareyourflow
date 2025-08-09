@@ -63,6 +63,53 @@ export function Memory3DPanel({
   const scene = useAiScene({ filename: undefined, code: sourceCode ?? "", steps: steps ?? [] });
   const spec: SceneSpec = useMemo(() => {
     const scenes = sceneFromServer?.scenes ?? scene.data?.scenes ?? [];
+
+    // N 값 추출 (C++: int N = 27; 혹은 N=27)
+    const deriveN = (): number | undefined => {
+      const m = /\bint\s+N\s*=\s*(\d+)\s*;/.exec(sourceCode ?? "");
+      if (m) return parseInt(m[1], 10);
+      const m2 = /\bN\s*=\s*(\d+)\b/.exec(sourceCode ?? "");
+      if (m2) return parseInt(m2[1], 10);
+      return undefined;
+    };
+
+    const N = deriveN();
+
+    // 단계별 강제 시나리오: 입력 단계 → N만 표시, 초기화 단계 → N×N 보드 요약 표시
+    if (activeStepId === "input" && N) {
+      return {
+        kind: "unknown",
+        dimensions: [1, 1, 1],
+        cells: [
+          { id: "n", position: [0, 0, 0], value: N, label: "N", state: "active" },
+        ],
+        title: `Input (N=${N})`,
+        transitions: [],
+      } as unknown as SceneSpec;
+    }
+
+    if (activeStepId === "array" && N) {
+      // 27x27 전체를 모두 그리면 과밀하므로 3x3 요약 타일로 표시하되, dimensions는 실제 N을 반영
+      const sampleCells = [
+        { id: "tl", position: [0, 0, 0], value: "*", label: "", state: "active" },
+        { id: "tm", position: [1, 0, 0], value: "*", label: "", state: "default" },
+        { id: "tr", position: [2, 0, 0], value: "*", label: "", state: "default" },
+        { id: "ml", position: [0, 1, 0], value: "*", label: "", state: "default" },
+        { id: "mm", position: [1, 1, 0], value: "*", label: "", state: "default" },
+        { id: "mr", position: [2, 1, 0], value: "*", label: "", state: "default" },
+        { id: "bl", position: [0, 2, 0], value: "*", label: "", state: "default" },
+        { id: "bm", position: [1, 2, 0], value: "*", label: "", state: "default" },
+        { id: "br", position: [2, 2, 0], value: "*", label: "", state: "default" },
+      ];
+      return {
+        kind: "array2D",
+        dimensions: [N, N, 1],
+        cells: sampleCells,
+        title: `Board (${N}x${N})`,
+        transitions: [],
+      } as unknown as SceneSpec;
+    }
+
     const matched = activeStepId
       ? scenes.find((s: any) => Array.isArray(s?.transitions) && s.transitions.some((t: any) => t.atStepId === activeStepId))
       : undefined;

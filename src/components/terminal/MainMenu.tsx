@@ -21,10 +21,10 @@ export function MainMenu({ onSectionSelect, active }: { onSectionSelect: (sectio
 
   const menuItems: MenuItem[] = useMemo(
     () => [
-      { id: "input", label: "1. 입력", description: "문제 입력 처리 및 파싱" },
-      { id: "array", label: "2. 배열 생성", description: "자료구조 초기화 및 설정" },
-      { id: "dp", label: "3. DP", description: "동적 프로그래밍 알고리즘" },
-      { id: "output", label: "4. 출력", description: "결과 계산 및 출력" },
+      { id: "input", label: "1. 입력", description: "N = 27 설정 (3^k)" },
+      { id: "array", label: "2. 초기화", description: "N×N 보드를 '*'로 채움" },
+      { id: "dp", label: "3. 분할정복", description: "가운데를 비우고 8개 블록 재귀" },
+      { id: "output", label: "4. 출력", description: "완성된 패턴을 화면에 출력" },
     ],
     []
   );

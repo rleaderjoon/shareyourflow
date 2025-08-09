@@ -6,63 +6,75 @@ export interface SectionEntry {
 
 export const sectionContent: Record<string, SectionEntry> = {
   input: {
-    title: "1. 입력 처리",
-    code: `// 입력 데이터 읽기 및 파싱
-function parseInput(input) {
-  const n = parseInt(input.trim(), 10);
-  return { n };
-}
+    title: "1. 입력",
+    code: `// C++: 별 찍기 - 10 (BOJ 2447), 예시 N = 27
+#include <bits/stdc++.h>
+using namespace std;
 
-// 예시 입력: 줄 수 N
-const input = \`5\`;
-
-const { n } = parseInput(input);
-console.log('라인 수:', n);`,
+int N = 27; // 문제에서 N은 3^k, 여기서는 시연을 위해 27로 고정
+`,
     explanation:
-      "별찍기 삼각형을 그릴 라인 수 N을 파싱합니다. 입력은 한 줄 정수입니다.",
+      "N은 3의 거듭제곱입니다. 테스트를 위해 N=27로 고정합니다.",
   },
   array: {
-    title: "2. 자료구조 초기화",
-    code: `// 출력 라인을 담을 배열 준비
-function initialize(n) {
-  // lines: 각 행의 문자열을 담는 1차원 배열
-  const lines = new Array(n).fill("");
-  return { lines };
+    title: "2. 초기화",
+    code: `// N x N 보드를 '*'로 채워 시작
+vector<string> board;
+
+void initBoard(int n) {
+  board.assign(n, string(n, '*'));
 }
 
-const { lines } = initialize(n);
-console.log('초기 lines:', lines);`,
+// 초기화
+// initBoard(N);`,
     explanation:
-      "별 삼각형을 문자열로 담을 1차원 배열을 준비합니다. 각 인덱스가 한 줄을 의미합니다.",
+      "N×N 보드를 '*'로 채워 시작합니다. 중앙을 비우는 재귀를 적용하기 전의 기본 상태입니다.",
   },
   dp: {
-    title: "3. 구현",
-    code: `// 별찍기: 왼쪽 정렬 삼각형(높이 n)
-function buildTriangle(n, lines) {
-  for (let i = 1; i <= n; i++) {
-    lines[i - 1] = '*'.repeat(i);
-    // 진행 상황 출력
-    console.log(\`line \${i}: \${lines[i - 1]}\`);
+    title: "3. 분할정복",
+    code: `// 가운데 (n/3) 정사각형을 공백으로 비우고
+// 3x3 블록 중 가운데를 제외한 8개 영역에 대해 재귀 수행
+void carve(int x, int y, int n) {
+  if (n == 1) return;
+  int m = n / 3;
+  // 가운데 비우기
+  for (int i = x + m; i < x + 2*m; ++i) {
+    for (int j = y + m; j < y + 2*m; ++j) {
+      board[i][j] = ' ';
+    }
   }
-  return lines;
+  // 3x3 하위 블록 순회 (가운데 제외)
+  for (int dx = 0; dx < 3; ++dx) {
+    for (int dy = 0; dy < 3; ++dy) {
+      if (dx == 1 && dy == 1) continue; // 가운데 블록 스킵
+      carve(x + dx*m, y + dy*m, m);
+    }
+  }
 }
 
-const resultLines = buildTriangle(n, lines);`,
+// initBoard(N);
+// carve(0, 0, N);`,
     explanation:
-      "1부터 N까지 반복하며 i번째 줄에 '*'를 i개 채워 왼쪽 정렬 삼각형을 만듭니다.",
+      "크기 n 보드의 중앙 (n/3) 정사각형을 공백으로 만들고, 가장자리를 구성하는 8개의 (n/3) 크기 보드에 대해 재귀적으로 동일한 작업을 수행합니다.",
   },
   output: {
-    title: "4. 결과 출력",
-    code: `// 결과 출력
-function printLines(lines) {
-  const out = lines.join('\n');
-  console.log(out);
-  return out;
-}
+    title: "4. 출력",
+    code: `int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
 
-const output = printLines(resultLines);`,
+  // 입력은 보통 cin >> N; 이지만, 데모에서는 N=27 고정
+  initBoard(N);
+  carve(0, 0, N);
+
+  for (int i = 0; i < N; ++i) {
+    cout << board[i] << "\n";
+  }
+  return 0;
+}
+`,
     explanation:
-      "조립된 문자열 배열을 줄바꿈으로 연결해 콘솔로 출력합니다.",
+      "초기화 후 carve를 적용하고 완성된 보드를 출력합니다.",
   },
 };
 
