@@ -122,7 +122,7 @@ export const SceneSpecJsonSchema = {
             },
           },
         },
-        required: ["kind", "dimensions", "cells"],
+        required: ["kind", "title", "dimensions", "cells", "transitions"],
         additionalProperties: false,
       },
     },
