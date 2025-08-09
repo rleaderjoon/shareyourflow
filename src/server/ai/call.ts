@@ -24,9 +24,19 @@ export async function callAi(args: CallAiArgs): Promise<SceneSpecResponse> {
     },
     body: JSON.stringify({
       model: args.model,
-      messages: [
-        { role: "system", content: args.system },
-        { role: "user", content: args.user },
+      input: [
+        {
+          role: "system",
+          content: [
+            { type: "text", text: args.system },
+          ],
+        },
+        {
+          role: "user",
+          content: [
+            { type: "text", text: args.user },
+          ],
+        },
       ],
       text: { format: args.text_format },
     }),
