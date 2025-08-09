@@ -68,8 +68,12 @@ export function TerminalInterface() {
         <div className="lg:col-span-4 space-y-4 h-full">
           <div className={`${activePanel === "steps" ? "ring-2 ring-neutral-900 rounded-[12px]" : ""}`}>
             <div onClick={() => setActivePanel("steps")}> 
-              <WindowChrome title="단계">
-              <StepsPanel steps={steps} activeStepId={activeStepId} />
+            <WindowChrome title="단계">
+              <StepsPanel
+                steps={steps}
+                activeStepId={activeStepId}
+                onSelect={(id) => setActiveStepId(id)}
+              />
               </WindowChrome>
             </div>
           </div>
