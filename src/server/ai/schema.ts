@@ -72,7 +72,7 @@ export const SceneSpecJsonSchema = {
             type: "array",
             items: {
               type: "object",
-              required: ["id", "position", "value"],
+              required: ["id", "position", "value", "label", "state"],
               properties: {
                 id: { type: "string" },
                 position: {
@@ -104,7 +104,7 @@ export const SceneSpecJsonSchema = {
                   type: "array",
                   items: {
                     type: "object",
-                    required: ["id"],
+                    required: ["id", "value", "state", "label"],
                     properties: {
                       id: { type: "string" },
                       value: { type: ["string", "number", "boolean", "null"] },
