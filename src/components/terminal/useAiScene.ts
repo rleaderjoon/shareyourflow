@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { SceneSpecResponse } from "@/server/ai/schema";
 
 export interface UseAiSceneArgs {
@@ -15,12 +15,13 @@ export function useAiScene({ filename, code, steps }: UseAiSceneArgs) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const stepsKey = useMemo(() => JSON.stringify(steps), [steps]);
+
   useEffect(() => {
     let aborted = false;
     async function run() {
       setLoading(true);
       setError(null);
-      setData(null);
       try {
         const res = await fetch("/api/ai/scene", {
           method: "POST",
@@ -45,10 +46,8 @@ export function useAiScene({ filename, code, steps }: UseAiSceneArgs) {
           setSource(json.source as "ai" | "cache");
         } else if (json?.payload) {
           // 서버에 OPENAI_API_KEY가 없을 때 페이로드만 반환
-          setData(null);
           setSource("payload");
         } else {
-          setData(null);
           setSource(null);
         }
       } catch (e) {
@@ -62,7 +61,7 @@ export function useAiScene({ filename, code, steps }: UseAiSceneArgs) {
     return () => {
       aborted = true;
     };
-  }, [filename, code, steps]);
+  }, [filename, code, stepsKey]);
 
   return { data, source, loading, error } as const;
 }

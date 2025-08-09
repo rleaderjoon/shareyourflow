@@ -34,6 +34,7 @@ export function TerminalInterface() {
   const combinedCode = Object.values(sectionContent)
     .map((s) => `// ${s.title}\n${s.code}`)
     .join("\n\n/* --- */\n\n");
+  // 전체 코드 컨텍스트는 한 번만 요청되도록 stepsKey를 고정
   const aiScene = useAiScene({
     filename: undefined,
     code: combinedCode,

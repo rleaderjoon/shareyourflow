@@ -59,6 +59,7 @@ export function Memory3DPanel({
   }, [cells.length, active]);
 
   // 간단 분석 결과(데모): 소스코드가 주어지면 분석, 없으면 기본 격자
+  // AI는 상위에서 1회만 호출하고, 여기서는 폴백용으로만 사용
   const scene = useAiScene({ filename: undefined, code: sourceCode ?? "", steps: steps ?? [] });
   const spec: SceneSpec = useMemo(() => {
     const baseScene = sceneFromServer?.scenes?.[0] ?? scene.data?.scenes?.[0];
@@ -91,7 +92,7 @@ export function Memory3DPanel({
       dimensions: [6, 4, 1],
       cells: cells.map((c) => ({ id: c.id, position: [c.x, c.y, c.z], value: c.value })),
     } as unknown as SceneSpec;
-  }, [scene.data, sourceCode, cells]);
+  }, [sceneFromServer, scene.data, sourceCode, cells, activeStepId]);
 
   return (
     <div onClick={onActivate} className={`border border-neutral-300 rounded-md bg-white/70 backdrop-blur p-4`}>
