@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { SceneSpecResponse } from "@/server/ai/schema";
 
 export interface UseAiSceneArgs {
@@ -17,9 +17,14 @@ export function useAiScene({ filename, code, steps }: UseAiSceneArgs) {
 
   const stepsKey = useMemo(() => JSON.stringify(steps), [steps]);
 
+  const requestKey = useMemo(() => `${filename ?? 'nofile'}::${code.length}::${stepsKey}`, [filename, code.length, stepsKey]);
+  const lastKeyRef = useRef<string | null>(null);
+
   useEffect(() => {
-    let aborted = false;
     async function run() {
+      // React StrictMode (dev)에서 중복 호출 방지
+      if (lastKeyRef.current === requestKey) return;
+      lastKeyRef.current = requestKey;
       setLoading(true);
       setError(null);
       try {
@@ -35,7 +40,7 @@ export function useAiScene({ filename, code, steps }: UseAiSceneArgs) {
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
-        if (aborted) return;
+        if (lastKeyRef.current !== requestKey) return; // 최신 요청만 반영
         if (json?.data) {
           let parsed: SceneSpecResponse | null = null;
           if (typeof json.data === "string") {
@@ -70,20 +75,20 @@ export function useAiScene({ filename, code, steps }: UseAiSceneArgs) {
         }
       } catch (e) {
         const msg = e instanceof Error ? e.message : "Unknown error";
-        if (!aborted) setError(msg);
+        setError(msg);
         if (process.env.NODE_ENV !== "production") {
           // eslint-disable-next-line no-console
           console.error("[AI][scene][error]", msg);
         }
       } finally {
-        if (!aborted) setLoading(false);
+        setLoading(false);
       }
     }
     run();
     return () => {
-      aborted = true;
+      // no-op: 최신 요청 가드로 경쟁상태 방지
     };
-  }, [filename, code, stepsKey]);
+  }, [requestKey]);
 
   return { data, source, loading, error } as const;
 }

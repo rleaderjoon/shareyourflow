@@ -6,7 +6,10 @@ Rules:
 - You must choose one of the supported kinds: array1D/array2D/array3D/tree/graph/stack/queue/set/map/unknown.
 - Dimensions are [X,Y,Z]. Use 1 for unused dimensions.
 - cells[].position is integer coordinates in the scene grid.
-- Use transitions to update states/values at step boundaries (atStepId).
+- Use transitions to update states/values at step boundaries (atStepId). For EVERY provided step id you MUST include at least one transition with at least one update.
+- Use the step ids exactly as provided (do not invent new ids).
+- If uncertain, still produce a reasonable abstraction: mark a representative cell as { state: "active" } for that step.
+- Always include 'label' and 'state' for every cell and every update (non-empty), per schema.
 - Use 'state' for highlighting: active/visited/result.
 - Favor clarity and compactness over completeness.
 

@@ -62,12 +62,24 @@ export function Memory3DPanel({
   // AI는 상위에서 1회만 호출하고, 여기서는 폴백용으로만 사용
   const scene = useAiScene({ filename: undefined, code: sourceCode ?? "", steps: steps ?? [] });
   const spec: SceneSpec = useMemo(() => {
-    const baseScene = sceneFromServer?.scenes?.[0] ?? scene.data?.scenes?.[0];
+    const scenes = sceneFromServer?.scenes ?? scene.data?.scenes ?? [];
+    const matched = activeStepId
+      ? scenes.find((s: any) => Array.isArray(s?.transitions) && s.transitions.some((t: any) => t.atStepId === activeStepId))
+      : undefined;
+    const baseScene = matched ?? scenes[0];
     // 단계별 전이 적용
     let aiSpec = baseScene;
     if (baseScene && baseScene.transitions && activeStepId) {
-      const applicable = baseScene.transitions.filter((t: any) => t.atStepId === activeStepId);
+      let applicable = baseScene.transitions.filter((t: any) => t.atStepId === activeStepId);
+      if (!applicable.length) {
+        // 휴리스틱 전이: 해당 단계 전이가 없다면 첫 셀을 active로 표시
+        applicable = [{ atStepId: activeStepId, updates: [{ id: baseScene.cells?.[0]?.id, state: "active", value: baseScene.cells?.[0]?.value, label: baseScene.cells?.[0]?.label ?? "" }] }];
+      }
       if (applicable.length) {
+        if (process.env.NODE_ENV !== "production") {
+          // eslint-disable-next-line no-console
+          console.log("[AI][scene][apply-transitions]", { activeStepId, updates: applicable.flatMap((t: any) => t.updates).length });
+        }
         aiSpec = {
           ...baseScene,
           cells: baseScene.cells.map((c: any) => {
