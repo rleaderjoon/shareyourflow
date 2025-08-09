@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "../components/ui/button";
 import { AlgorithmCard } from "../components/AlgorithmCard";
 import { LoginPage } from "../components/LoginPage";
@@ -181,6 +182,12 @@ export default function App() {
                 <button className="hover:text-gray-600">랭킹</button>
               </nav>
               <div className="flex items-center gap-4">
+                <Link
+                  href="/cli"
+                  className="border border-black text-black hover:bg-black hover:text-white rounded-none font-light px-3 py-2"
+                >
+                  CLI 데모
+                </Link>
                 <Button
                   variant="outline"
                   className="border-black text-black hover:bg-black hover:text-white rounded-none font-light"
@@ -254,10 +261,11 @@ export default function App() {
         {/* Algorithm Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {algorithmData.map((algorithm, index) => (
-            <AlgorithmCard
-              key={index}
-              {...algorithm}
-            />
+            <Link key={index} href="/cli">
+              <AlgorithmCard
+                {...algorithm}
+              />
+            </Link>
           ))}
         </div>
 
