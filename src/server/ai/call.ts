@@ -28,13 +28,13 @@ export async function callAi(args: CallAiArgs): Promise<SceneSpecResponse> {
         {
           role: "system",
           content: [
-            { type: "text", text: args.system },
+            { type: "input_text", text: args.system },
           ],
         },
         {
           role: "user",
           content: [
-            { type: "text", text: args.user },
+            { type: "input_text", text: args.user },
           ],
         },
       ],
